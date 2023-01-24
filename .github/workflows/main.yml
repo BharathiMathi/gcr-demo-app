@@ -11,14 +11,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
-
     steps:
-      - uses: actions/checkout@v1
-      - name: Build @ Push Image
-        run: |
-          echo "${{secrets.DOCKERPW}}" | docker login -u "bhmat89" --password-stdin
-          docker push bhmat89/git_action_v2
-
+        - uses: actions/checkout@v2
+        - name: docker login
+          env:
+            DOCKER_USER: ${{secrets.DOCKER_USER}}
+            DOCKER_PASSWORD: ${{secrets.DOCKERPW}}
+            repository: ${{secrets.DOCKER_USER}}/git_action_v2:latest
+            tags: latest, ${{ secrets.DOCKER_TOKEN }}
+          run: |
+            docker login -u $DOCKER_USER -p $DOCKERPW
+                   
+        - name: List images
+          run: docker images    
+        - name: Docker Push
+          run: docker push ${{secrets.DOCKER_USER}}/git_action_v2:latest
 
       
         
